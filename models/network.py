@@ -10,6 +10,7 @@ class Network:
         self.__width: list[int] = width
         self.__size: int = sum(self.__width)
         self.__depth: int = depth
+        self.__saved_weights = []
 
         # create layers
         for x in range(depth):
@@ -42,8 +43,34 @@ class Network:
         return self.__network[0:-1]
 
     @property
+    def network(self) -> list[Layer]:
+        return self.__network
+
+    @property
     def size(self) -> int:
         return self.__size
+
+    def set_input_layer(self, new_input_values: list[float]) -> None:
+        for i in range(len(self.__input_layer.nodes)):
+            self.__input_layer.nodes[i].set_value(new_value=new_input_values[i])
+
+    def save_weights(self) -> None:
+        self.__saved_weights = []
+        for layer in self.__network:
+            current_layer = []
+            for node in layer.nodes:
+                current_layer.append(node.children)
+            self.__saved_weights.append(current_layer)
+
+    def revert_weights(self) -> None:
+        """
+        self.__saved_weights is a list of layers, each layer is a list of nodes, each node is a dict of children and weights
+        """
+        for x in range(len(self.__network)):
+            for y in range(len(self.__network[x].nodes)):
+                for child in self.__network[x].nodes[y].children:
+                    self.__network[x].nodes[y].clear_children()
+                    self.__network[x].nodes[y].set_child(child_node=child, weight=self.__saved_weights[x][y][child])
 
     def __str__(self) -> str:
         ret_str: str = ""
@@ -51,3 +78,4 @@ class Network:
         ret_str += f"depth: {self.__depth}\n"
         ret_str += f"size: {self.__size}\n"
         return ret_str
+
