@@ -2,13 +2,13 @@ from models.node import Node
 
 
 class Layer:
-    def __init__(self, number: int, width: int, default_weight: int):
+    def __init__(self, number: int, width: int, default_weight: float):
         self.__number: int = number
         self.__width: int = width
         self.__nodes: list[Node] = []
-        self.__default_weight: int = default_weight
+        self.__default_weight: float = default_weight
         for i in range(self.__width):
-            self.__nodes.append(Node())
+            self.__nodes.append(Node(parent_layer_number=self.__number))
 
 
     @property

@@ -1,6 +1,5 @@
 from PIL import Image
 import numpy as np
-from typing import Union
 
 
 class ImageHandler:
@@ -17,10 +16,19 @@ class ImageHandler:
             float_list.append(float_val)
         return float_list
 
-    def decode(self, rgb_floats: list[float], path: str) -> None:
-        rgb_array = np.array(
-            [[(int(val * 1000) // 1000000) % 10, (int(val * 1000) // 1000) % 1000, int(val * 1000) % 1000] for val in
-             rgb_floats], dtype=np.uint8)
-        rgb_array = rgb_array.reshape(self.__desired_resolution[1], self.__desired_resolution[0], 3)
-        img = Image.fromarray(rgb_array)
-        img.save(path)
+    def decode(self, rgb_floats: list[float], path: str, save: bool) -> None | list[tuple[int, int, int]]:
+        rgb_tuples: list[tuple[int, int, int]] = []
+        for val in rgb_floats:
+            rgb_str = '{:.9f}'.format(val)[2:]
+            rgb_str = rgb_str.split('.')[0]
+            if not len(rgb_str) == 9:
+                rgb_str += '0'
+            r, g, b = int(rgb_str[0:3]), int(rgb_str[3:6]), int(rgb_str[6:9])
+            rgb_tuples.append((r, g, b))
+        if not save:
+            return rgb_tuples
+        else:
+            img = Image.new(mode="RGB", size=self.__desired_resolution)
+            img.putdata(rgb_tuples)
+            img.save(path)
+

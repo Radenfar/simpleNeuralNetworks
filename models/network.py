@@ -3,10 +3,10 @@ from models.node import Node
 
 
 class Network:
-    def __init__(self, depth: int, width: list[int], default_weight: int):
+    def __init__(self, depth: int, width: list[int], default_weight: float):
         # setting of attribute vars
         self.__network: list[Layer] = []
-        self.__default_weight: int = default_weight
+        self.__default_weight: float = default_weight
         self.__width: list[int] = width
         self.__size: int = sum(self.__width)
         self.__depth: int = depth
