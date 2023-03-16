@@ -8,10 +8,11 @@ from models.layer import Layer
 
 
 class Trainer:
-    def __init__(self, network: Network, data_path: str, output_path: str, randomness: float, iteration_wait: int = 3):
+    def __init__(self, network: Network, data_path: str, output_path: str, randomness: float, input_path: str, iteration_wait: int = 3):
         self.__network: Network = network  # the network to train
         self.__data_path: str = data_path  # path to the CSV file containing the encoded data
         self.__output_path: str = output_path  # path to the saved resultant image
+        self.__input_path: str = input_path  # path to the input images folder
         self.__randomness: float = randomness  # convert this float into a range for random multiplier of weights
         self.__iteration_wait: int = iteration_wait  # number of iterations to wait before adjusting weights
         self.__iteration: int = 0  # current iteration
@@ -38,12 +39,14 @@ class Trainer:
             - increment the iteration
         - save the image
         """
-        encoded_data_dict = self.read_encoded_data()
+        # encoded_data_dict = self.encode_data_set(encoded_data_path=self.__input_path)
         previous_score: float = 0.0
-        image_handler: ImageHandler = ImageHandler((1024, 1024))
+        image_handler: ImageHandler = ImageHandler((3, 3))
+        image_path: str = r"C:\Users\adamc\Documents\GitHub_new\simpleNeuralNetworks\images\encoded\2.PNG"
+        encoded_data = image_handler.encode(path=image_path)
+        self.__network.set_input_layer(encoded_data)
         while self.__iteration <= max_iterations:
-            encoded_data = random.choice(list(encoded_data_dict.values()))
-            self.__network.set_input_layer(encoded_data)
+            # filename, encoded_data = random.choice(list(encoded_data_dict.items()))
             self.__network.save_weights()
             for layer_num in range(len(self.__network.hidden_layers)):
                 for _ in range(int(self.__randomness * len(self.__network.hidden_layers[layer_num].nodes))):
@@ -65,24 +68,15 @@ class Trainer:
         image_handler.decode(rgb_floats=rgb_floats, path=self.__output_path, save=True)
 
     def encode_data_set(self, encoded_data_path: str):
-        """
-            Encode a dataset of images and store the encoded data in a CSV file.
-
-            Args:
-                encoded_data_path: A string representing the path to the directory containing the images to encode.
-                database_path: A string representing the path to the CSV file to store the encoded data.
-
-            Returns:
-                A dictionary mapping image filenames to lists of encoded data.
-            """
-        img_handler = ImageHandler((1024, 1024))
+        img_handler = ImageHandler((3, 3))
         encoded_data_dict = {}
         for filename in os.listdir(encoded_data_path):
-            if filename.endswith('.jpg') or filename.endswith('.jpeg') or filename.endswith('.png'):
+            if filename.endswith('.jpg') or filename.endswith('.jpeg') or filename.endswith('.PNG'):
                 img_path: str = os.path.join(encoded_data_path, filename)
                 encoded_data = img_handler.encode(path=img_path)
+                print(encoded_data)
                 encoded_data_dict[filename] = encoded_data
-                with open(self.__data_path, 'a', newline='') as csv_file:
+                with open(self.__data_path, 'r', newline='') as csv_file:
                     writer = csv.writer(csv_file)
                     writer.writerow([filename, encoded_data])
         return encoded_data_dict

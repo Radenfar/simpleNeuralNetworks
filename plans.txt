@@ -11,11 +11,6 @@ LAST THING I DID:
 Finished the basic substructure of the network, created an encoder/decoder of images to the float format
 
 NEXT THING TO DO:
-^ refer to list above
-
-Training model:
-- adjust n number of applicable (iteration was long enough ago) weights randomly
-- calculate the similarity score of the image
-- if the score is higher, keep the weights
-- if the score is lower, revert the weights
-- repeat until the score is high enough (threshold) or the number of iterations is reached (limiter)
+- look over the code and make sure code isn't repeated and overall structure is good
+- run and fix, run and fix, run and fix
+- create a way of saving and loading the network

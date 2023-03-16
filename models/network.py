@@ -63,9 +63,6 @@ class Network:
             self.__saved_weights.append(current_layer)
 
     def revert_weights(self) -> None:
-        """
-        self.__saved_weights is a list of layers, each layer is a list of nodes, each node is a dict of children and weights
-        """
         for x in range(len(self.__network)):
             for y in range(len(self.__network[x].nodes)):
                 for child in self.__network[x].nodes[y].children:

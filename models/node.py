@@ -26,7 +26,7 @@ class Node:
             child.set_value(new_value=new_value * self.__children[child])
 
     def adjust_random_child(self, multiplier: float, iteration: int) -> None:
-        cur_child: Node = random.sample(self.__children.keys(), 1)
+        cur_child: Node = random.choice(list(self.__children.keys()))
         new_weight = self.__children[cur_child] * multiplier
         self.set_child(cur_child, new_weight)
         self.__iteration = iteration

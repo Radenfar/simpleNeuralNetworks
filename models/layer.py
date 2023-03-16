@@ -10,7 +10,6 @@ class Layer:
         for i in range(self.__width):
             self.__nodes.append(Node(parent_layer_number=self.__number))
 
-
     @property
     def nodes(self) -> list[Node]:
         return self.__nodes

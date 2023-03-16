@@ -10,6 +10,7 @@ class ImageHandler:
         img = Image.open(path)
         img_resized = img.resize(self.__desired_resolution)
         img_array = np.array(img_resized.convert("RGB"))
+        # img_array = img_array / 255
         float_list = []
         for r, g, b in img_array.reshape(-1, 3):
             float_val = float(f"0.{r:03d}{g:03d}{b:03d}")
