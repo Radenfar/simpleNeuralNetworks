@@ -17,7 +17,7 @@ if __name__ == "__main__":
     RANDOMNESS: float = 0.5
     ITERATION_WAIT: int = 3
     trainer: Trainer = Trainer(network=net, data_path=DATA_PATH, output_path=OUTPUT_PATH, randomness=RANDOMNESS, iteration_wait=ITERATION_WAIT, input_path=INPUT_PATH)
-    MAX_ITERATIONS: int = 10000
+    MAX_ITERATIONS: int = 1000000
     THRESHOLD: float = 0.99
     trainer.image_train(max_iterations=MAX_ITERATIONS, threshold=THRESHOLD)
 

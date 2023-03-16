@@ -29,6 +29,7 @@ class Network:
                 for cur_node in self.__network[y].nodes:
                     for next_node in self.__network[y+1].nodes:
                         cur_node.set_child(child_node=next_node, weight=self.__default_weight)
+        print(f"Network created with {self.__size} nodes and {self.__depth} layers")
 
     @property
     def input_layer(self) -> Layer:
@@ -61,6 +62,7 @@ class Network:
             for node in layer.nodes:
                 current_layer.append(node.children)
             self.__saved_weights.append(current_layer)
+        print("Weights saved")
 
     def revert_weights(self) -> None:
         for x in range(len(self.__network)):
@@ -68,6 +70,7 @@ class Network:
                 for child in self.__network[x].nodes[y].children:
                     self.__network[x].nodes[y].clear_children()
                     self.__network[x].nodes[y].set_child(child_node=child, weight=self.__saved_weights[x][y][child])
+        print("Weights reverted")
 
     def __str__(self) -> str:
         ret_str: str = ""

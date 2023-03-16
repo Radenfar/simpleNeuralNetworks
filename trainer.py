@@ -1,6 +1,7 @@
 import os
 import csv
 import random
+import matplotlib.pyplot as plt
 from models.network import Network
 from models.imagehandler import ImageHandler
 from models.node import Node
@@ -16,6 +17,7 @@ class Trainer:
         self.__randomness: float = randomness  # convert this float into a range for random multiplier of weights
         self.__iteration_wait: int = iteration_wait  # number of iterations to wait before adjusting weights
         self.__iteration: int = 0  # current iteration
+        self.__similarities: list[float] = []  # list of similarity scores
 
     def image_train(self, max_iterations: int = 1000, threshold: float = 0.95):
         """
@@ -39,13 +41,16 @@ class Trainer:
             - increment the iteration
         - save the image
         """
+        print("Image training begins...")
         # encoded_data_dict = self.encode_data_set(encoded_data_path=self.__input_path)
         previous_score: float = 0.0
         image_handler: ImageHandler = ImageHandler((3, 3))
         image_path: str = r"C:\Users\adamc\Documents\GitHub_new\simpleNeuralNetworks\images\encoded\2.PNG"
         encoded_data = image_handler.encode(path=image_path)
         self.__network.set_input_layer(encoded_data)
+        print("Image training initialised...")
         while self.__iteration <= max_iterations:
+            print(f"Iteration: {self.__iteration}")
             # filename, encoded_data = random.choice(list(encoded_data_dict.items()))
             self.__network.save_weights()
             for layer_num in range(len(self.__network.hidden_layers)):
@@ -54,18 +59,27 @@ class Trainer:
                     if self.__iteration > random_choice.last_iteration + self.__iteration_wait:
                         multiplier = (self.__randomness * random.random()) + random.choice([0, 1])
                         random_choice.adjust_random_child(multiplier=multiplier, iteration=self.__iteration)
+                        print(f"Adjusted weight of node in layer {layer_num} by {multiplier}")
                     else:
+                        print(f"Skipped adjusting weight of node in layer {layer_num} (iteration too soon)")
                         continue
             rgb_floats = [node.value for node in self.__network.output_layer.nodes]
             output_rgbs = image_handler.decode(rgb_floats=rgb_floats, path=self.__output_path, save=False)
             input_rgbs = image_handler.decode(rgb_floats=encoded_data, path=self.__output_path, save=False)
             similarity_score = self.image_similarity(output_rgbs, input_rgbs)
+            print(f"Similarity score: {similarity_score}")
+            self.__similarities.append(similarity_score)
             if similarity_score < previous_score:
                 self.__network.revert_weights()
+                print(f"Reverted weights to previous iteration ({self.__iteration - 1})")
             else:
+                print(f"New Score: {similarity_score}")
                 previous_score = similarity_score
+                print(f"Keeping weights from iteration {self.__iteration}")
             self.__iteration += 1
         image_handler.decode(rgb_floats=rgb_floats, path=self.__output_path, save=True)
+        plt.plot(self.__similarities)
+        plt.show()
 
     def encode_data_set(self, encoded_data_path: str):
         img_handler = ImageHandler((3, 3))
@@ -101,3 +115,4 @@ class Trainer:
                         (output_rgbs[i][2] - test_data[i][2]) ** 2)
         mse /= len(output_rgbs)
         return (mse / 255 ** 2) / 3
+
