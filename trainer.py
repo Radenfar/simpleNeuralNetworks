@@ -75,8 +75,8 @@ class Trainer:
                 print(f"Keeping weights from iteration {self.__iteration}")
             self.__iteration += 1
         image_handler.decode(rgb_floats=rgb_floats, path=self.__output_path, save=True)
-        plt.plot(self.__similarities)
-        plt.show()
+        # plt.plot(self.__similarities)
+        # plt.show()
 
     def encode_data_set(self, encoded_data_path: str):
         img_handler = ImageHandler((3, 3))

@@ -8,7 +8,7 @@ class Layer:
         self.__nodes: list[Node] = []
         self.__default_weight: float = default_weight
         for i in range(self.__width):
-            self.__nodes.append(Node(parent_layer_number=self.__number))
+            self.__nodes.append(Node(parent_layer_number=self.__number, connection_count=self.__width))
         print(f"Layer {self.__number} created with {self.__width} nodes")
 
     @property
