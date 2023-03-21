@@ -14,3 +14,16 @@ NEXT THING TO DO:
 - look over the code and make sure code isn't repeated and overall structure is good
 - run and fix, run and fix, run and fix
 - create a way of saving and loading the network
+
+FIX:
+set_value -> meant to set the value of a Node. Then goes on to recursively calculate the children's values
+by weight and set those
+TAKES: a new value
+CALLED BY: itself, set input, set_weight
+
+set_weight -> meant to adjust the weight of a node. Afterwards, calls set_value to update the value of its children
+Takes: a multiplier
+CALLED BY: the trainer
+
+Found by debug:
+The first hidden layer value was exactly the same as the input layer?

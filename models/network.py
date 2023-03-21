@@ -54,6 +54,12 @@ class Network:
     def set_input_layer(self, new_input_values: list[float]) -> None:
         for i in range(len(self.__input_layer.nodes)):
             self.__input_layer.nodes[i].set_value(new_value=new_input_values[i])
+            print(f"Input layer node {i} set to {new_input_values[i]}")
+
+    def forward_propagate(self) -> None:
+        for layer in self.hidden_layers:
+            for node in layer.nodes:
+                node.update_children()
 
     def save_weights(self) -> None:
         self.__saved_weights = []

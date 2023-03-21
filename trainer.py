@@ -54,21 +54,18 @@ class Trainer:
             # filename, encoded_data = random.choice(list(encoded_data_dict.items()))
             self.__network.save_weights()
             for layer_num in range(len(self.__network.hidden_layers)):
-                for _ in range(int(self.__randomness * len(self.__network.hidden_layers[layer_num].nodes))):
-                    random_choice = random.choice(self.__network.hidden_layers[layer_num].nodes)
-                    if self.__iteration > random_choice.last_iteration + self.__iteration_wait:
-                        multiplier = (self.__randomness * random.random()) + random.choice([0, 1])
-                        random_choice.adjust_random_child(multiplier=multiplier, iteration=self.__iteration)
-                        print(f"Adjusted weight of node in layer {layer_num} by {multiplier}")
+                for random_node in self.__network.hidden_layers[layer_num].nodes:
+                    if not self.__iteration == 0 or self.__iteration > random_node.last_iteration + self.__iteration_wait:
+                        random_node.change_weight()
                     else:
-                        print(f"Skipped adjusting weight of node in layer {layer_num} (iteration too soon)")
                         continue
+            self.__network.forward_propagate()
             rgb_floats = [node.value for node in self.__network.output_layer.nodes]
             output_rgbs = image_handler.decode(rgb_floats=rgb_floats, path=self.__output_path, save=False)
             input_rgbs = image_handler.decode(rgb_floats=encoded_data, path=self.__output_path, save=False)
             similarity_score = self.image_similarity(output_rgbs, input_rgbs)
             print(f"Similarity score: {similarity_score}")
-            self.__similarities.append(similarity_score)
+            self.__similarities.append(self.__network.hidden_layers[0].nodes[0].value)
             if similarity_score < previous_score:
                 self.__network.revert_weights()
                 print(f"Reverted weights to previous iteration ({self.__iteration - 1})")
@@ -88,7 +85,6 @@ class Trainer:
             if filename.endswith('.jpg') or filename.endswith('.jpeg') or filename.endswith('.PNG'):
                 img_path: str = os.path.join(encoded_data_path, filename)
                 encoded_data = img_handler.encode(path=img_path)
-                print(encoded_data)
                 encoded_data_dict[filename] = encoded_data
                 with open(self.__data_path, 'r', newline='') as csv_file:
                     writer = csv.writer(csv_file)
